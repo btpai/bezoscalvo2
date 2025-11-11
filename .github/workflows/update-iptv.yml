@@ -1,0 +1,41 @@
+name: Actualizar Lista IPTV Twitch
+
+on:
+  schedule:
+    # Ejecutar cada 6 horas
+    - cron: '0 */10 * * *'
+  workflow_dispatch:  # Permite ejecución manual
+  push:
+    branches: [ main ]
+
+jobs:
+  update-iptv:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    - name: Ejecutar generador IPTV
+      run: |
+        python scripts/generate_iptv.py
+        
+    - name: Commit y push de cambios
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add twitch_iptv.m3u docs/twitch_iptv.m3u
+        git diff --staged --quiet || git commit -m "Actualizar lista IPTV - $(date +'%Y-%m-%d %H:%M')"
+        git push
