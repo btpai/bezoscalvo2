@@ -36,7 +36,7 @@ jobs:
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
         
- - name: Commit y push de cambios
+    - name: Commit y push de cambios
       run: |
         git add twitch_iptv.m3u docs/twitch_iptv.m3u
         git commit -m "🤖 Actualizar lista IPTV - $(date +'%Y-%m-%d %H:%M')" || echo "No hay cambios que commitear"
